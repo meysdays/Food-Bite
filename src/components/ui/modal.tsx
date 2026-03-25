@@ -1,4 +1,4 @@
-import { View, Pressable, Image } from "react-native";
+import { View, Pressable, Image, ScrollView } from "react-native";
 import React, { useState } from "react";
 import OutsideOverlay from "./outside-overlay";
 import Text from "./Text";
@@ -21,7 +21,7 @@ const CustomizeModal = () => {
     <OutsideOverlay onclose={() => closeModal()}>
       
       {data.map((item) => (
-        <View key={item.id}>
+        <ScrollView showsVerticalScrollIndicator={false} key={item.id}>
           <View className="w-19/20 h-64 mx-auto ">
             <Image
               className="w-full h-full rounded-3xl"
@@ -81,7 +81,7 @@ const CustomizeModal = () => {
           </View>
 
           <Button>Add 1 to Cart • $15.99</Button>
-        </View>
+        </ScrollView>
       ))}
     </OutsideOverlay>
   );
