@@ -1,5 +1,5 @@
-import { View, Dimensions, ScrollView } from "react-native";
-import React, { useState } from "react";
+import { View } from "react-native";
+import React, { useEffect, useState } from "react";
 import AppScreen from "@/src/ui/screen";
 import { BackIcon } from "@/src/assests/icons";
 import Text from "../../components/ui/Text";
@@ -10,104 +10,105 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  useAnimatedReaction,
-  runOnJS,
 } from "react-native-reanimated";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+import {
+  Directions,
+  Gesture,
+  GestureDetector,
+} from "react-native-gesture-handler";
 
 const TABS = ["Active", "Past"] as const;
+
 type Tab = (typeof TABS)[number];
 
 const Order = () => {
   const [tab, setTab] = useState<Tab>("Active");
-
-  const translateX = useSharedValue(0);
+  const animatedValue = useSharedValue(0);
   const currentIndex = useSharedValue(0);
 
-  // 🔗 Sync UI → React state (only for TabNavigator)
-  useAnimatedReaction(
-    () => currentIndex.value,
-    (value) => {
-      runOnJS(setTab)(TABS[value]);
-    },
-  );
+  // const currentIndex = TABS.indexOf(tab);
 
-  // 🎯 Gesture (drag + inertia + snapping)
-  const panGesture = Gesture.Pan()
-    .onUpdate((e) => {
-      translateX.value = -currentIndex.value * SCREEN_WIDTH + e.translationX;
-    })
-    .onEnd((e) => {
-      const velocity = e.velocityX;
-      const threshold = SCREEN_WIDTH / 2;
+  // const animatedValue = useSharedValue(1);
 
-      let nextIndex = currentIndex.value;
+  useEffect(() => {
+    currentIndex.value = TABS.indexOf(tab);
+  }, [tab]);
 
-      if (e.translationX < -threshold || velocity < -500) {
-        nextIndex += 1;
-      } else if (e.translationX > threshold || velocity > 500) {
-        nextIndex -= 1;
-      }
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: animatedValue.value }],
+    };
+  });
 
-      // Clamp
-      nextIndex = Math.max(0, Math.min(TABS.length - 1, nextIndex));
-
-      currentIndex.value = nextIndex;
-
-      // Snap
-      translateX.value = withSpring(-nextIndex * SCREEN_WIDTH, {
-        damping: 15,
-        stiffness: 120,
-      });
-    });
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
-
-  // 🧠 Tab click → move swipe
-  const handleTabChange = (selectedTab: Tab) => {
-    const index = TABS.indexOf(selectedTab);
-    currentIndex.value = index;
-    translateX.value = withSpring(-index * SCREEN_WIDTH);
+  const updateTab = (index: number) => {
+    if (index >= 0 && index < TABS.length) {
+      setTab(TABS[index]);
+    }
   };
+
+  const flingLeftGesture = Gesture.Fling()
+    .direction(Directions.LEFT)
+    .onEnd(() => {
+      if (currentIndex.value < TABS.length - 1) {
+        const nextIndex = currentIndex.value + 1;
+
+        animatedValue.value = withSpring(0);
+
+        // runOnJS(updateTab)(nextIndex);
+        updateTab(nextIndex);
+      }
+    })
+    .runOnJS(true);
+
+  const flingRightGesture = Gesture.Fling()
+    .direction(Directions.RIGHT)
+    .onEnd(() => {
+      if (currentIndex.value > 0) {
+        const nextIndex = currentIndex.value - 1;
+
+        animatedValue.value = withSpring(1);
+
+        // runOnJS(updateTab)(nextIndex);
+        updateTab(nextIndex);
+      }
+    })
+    .runOnJS(true);
+
+  const multiGesture = Gesture.Simultaneous(
+    flingRightGesture,
+    flingLeftGesture,
+  );
 
   return (
     <AppScreen edges={["top"]} contentContainerClassName="px-0">
-      {/* Header */}
       <View className="flex flex-row w-14/20 items-center justify-between px-5">
         <BackIcon />
         <Text className="font-bold text-2xl">My Orders</Text>
       </View>
 
-      {/* Tabs */}
       <View className="border-b border-primary/10 w-full">
-        <TabNavigator tabs={TABS} value={tab} onChange={handleTabChange} />
+        <TabNavigator tabs={TABS} value={tab} onChange={setTab} />
       </View>
 
-      {/* Swipe Container */}
-      <GestureDetector gesture={panGesture}>
-        <Animated.View
-          style={[
-            {
-              flexDirection: "row",
-              width: SCREEN_WIDTH * TABS.length,
-            },
-            animatedStyle,
-          ]}
-        >
-          {/* ACTIVE TAB */}
-          <View style={{ width: SCREEN_WIDTH }}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <View className="px-5">
+      <GestureDetector gesture={multiGesture}>
+        <Animated.View style={animatedStyle}>
+          <View className="flex flex-1 px-5">
+            {tab === "Active" ? (
+              <View className="">
                 <Text className="-mt-2 font-bold tracking-widest text-[#64748B]">
                   ACTIVE ORDERS
                 </Text>
-
                 {ActiveOrders.map((item) => (
-                  <OrderCard key={item.resName} {...item} />
+                  <OrderCard
+                    key={item.resName}
+                    image={item.image}
+                    resName={item.resName}
+                    time={item.time}
+                    status={item.status}
+                    foodDesc={item.foodDesc}
+                    amount={item.amount}
+                    button={item.button}
+                  />
                 ))}
 
                 <Text className="font-bold tracking-widest text-[#64748B] py-4">
@@ -115,24 +116,40 @@ const Order = () => {
                 </Text>
 
                 {PastOrders.map((item) => (
-                  <OrderCard key={item.resName} {...item} />
+                  <OrderCard
+                    key={item.resName}
+                    image={item.image}
+                    resName={item.resName}
+                    time={item.time}
+                    status={item.status}
+                    foodDesc={item.foodDesc}
+                    amount={item.amount}
+                    button={item.button}
+                  />
                 ))}
               </View>
-            </ScrollView>
-          </View>
-
-          {/* PAST TAB */}
-          <View style={{ width: SCREEN_WIDTH }}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <View className="px-5">
-                <Text className="font-bold text-lg">Past Orders</Text>
+            ) : (
+              <View className="">
+                <Text className="font-bold tracking-widest text-[#64748B] py-4">
+                  PAST ORDERS
+                </Text>
 
                 {PastOrders.map((item) => (
-                  <OrderCard key={item.resName} {...item} />
+                  <OrderCard
+                    key={item.resName}
+                    image={item.image}
+                    resName={item.resName}
+                    time={item.time}
+                    status={item.status}
+                    foodDesc={item.foodDesc}
+                    amount={item.amount}
+                    button={item.button}
+                  />
                 ))}
               </View>
-            </ScrollView>
+            )}
           </View>
+          {/* {tab === "Past" && <Text>Past Content</Text>} */}
         </Animated.View>
       </GestureDetector>
     </AppScreen>

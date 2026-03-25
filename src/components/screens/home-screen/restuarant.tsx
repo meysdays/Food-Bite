@@ -7,14 +7,16 @@ const Restuarants = () => {
   return (
     <View className="flex-1">
       {TopRestuarants.map((item) => (
+        
         <Card
-          key={item.foodName}
+          key={item.id}
+          id={item.id}
           img={item.img}
           imgLogo={item.imgLogo}
           foodName={item.foodName}
           restuarant={item.restuarant}
           time={item.time}
-          distance={item.distanc}
+          distance={item.distance}
         />
       ))}
     </View>

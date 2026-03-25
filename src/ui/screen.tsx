@@ -28,9 +28,9 @@ export default function AppScreen(props: IAppScreenProps) {
         )}
         showsVerticalScrollIndicator={false}
       >
-        <GestureHandlerRootView style={{ flex: 1 }}>
+        
           {children}
-        </GestureHandlerRootView>
+        
       </ScrollView>
     </UniwindSafeAreaView>
   );

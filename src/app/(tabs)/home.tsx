@@ -11,8 +11,10 @@ import TextInput from "@/src/components/ui/input";
 import { Categories } from "@/src/components/screens/home-screen";
 import Restuarants from "@/src/components/screens/home-screen/restuarant";
 import CustomizeModal from "@/src/components/ui/modal";
+import { useAppContext } from "@/src/context";
 
 const HomeScreen = () => {
+  const {openModal} =useAppContext()
   const [isFormVisible, setIsFormVisible] = useState<boolean>(false)
   const Location = LocationIcon;
   const Notification = NotificationIcon;
@@ -41,9 +43,9 @@ const HomeScreen = () => {
         </View>
       </View>
 
-      {isFormVisible && (
+      {/* {isFormVisible && (
         <CustomizeModal onCancel={closeTodoForm}/>
-      )}
+      )} */}
 
       <View className="flex flex-row  items-center px-4 py-2 rounded-full bg-[#F1F5F9] ">
         <Search />
@@ -58,7 +60,7 @@ const HomeScreen = () => {
       <View className="flex flex-row justify-between items-center">
         <Text className="font-bold text-2xl">Top Restaurants</Text>
 
-        <Pressable onPress={openTodoForm}>
+        <Pressable>
           <Text className="text-primary text-xl font-regular">View all</Text>
         </Pressable>
       </View>

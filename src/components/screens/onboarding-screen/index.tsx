@@ -14,7 +14,7 @@ export default function OnboardingScreen() {
   return (
     <AppScreen className="" edges={["top"]}>
       
-        <Pressable className="items-end mb-6" onPress={() => router.navigate("/(tabs)/home")}>
+        <Pressable className="items-end" onPress={() => router.navigate("/(tabs)/home")}>
           <Text className="text-md font-regular text-primary">Skip</Text>
         </Pressable>
 
@@ -22,12 +22,12 @@ export default function OnboardingScreen() {
         <Icon />
       </View>
 
-      <View className="mt-4">
+      <View className="">
         <Text className="text-center font-bold text-4xl">
           Your Cravings, Delivered.
         </Text>
       </View>
-      <View className="mb-6">
+      <View className="">
         <Text className="text-center font-regular text-sm text-[#64748B]">
           Explore the best local restaurants.
         </Text>

@@ -10,6 +10,8 @@ import {
 } from "@expo-google-fonts/syne";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AppContextProvider } from "../context";
+import CustomizeModal from "../components/ui/modal";
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
@@ -25,23 +27,26 @@ export default function RootLayout() {
   }
   return (
     <SafeAreaProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="auth" />
-          <Stack.Screen name="order" />
-          <Stack.Screen
-            name="(tabs)"
-            options={{
+      <AppContextProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <Stack
+            screenOptions={{
               headerShown: false,
             }}
-          />
-        </Stack>
-      </GestureHandlerRootView>
+          >
+            <Stack.Screen name="index" />
+            <Stack.Screen name="auth" />
+            <Stack.Screen name="order" />
+            <Stack.Screen
+              name="(tabs)"
+              options={{
+                headerShown: false,
+              }}
+            />
+          </Stack>
+          <CustomizeModal/>
+        </GestureHandlerRootView>
+      </AppContextProvider>
     </SafeAreaProvider>
   );
 }

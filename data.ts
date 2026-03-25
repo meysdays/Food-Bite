@@ -33,6 +33,7 @@ import {
   SusBagIcon,
   SusIcon,
 } from "./src/assests/icons";
+import { CardPropsType } from "./src/types/types";
 export const CategoryData = [
   {
     name: "Pizza",
@@ -52,30 +53,33 @@ export const CategoryData = [
   },
 ];
 
-export const TopRestuarants = [
+export const TopRestuarants: CardPropsType[] = [
   {
+    id: 1,
     img: PizzaImg,
     imgLogo: ResOneImg,
     foodName: "Bella Napoli Pizza",
     restuarant: "Italian • Pizza • $$",
     time: "15 - 25 min",
-    distanc: "2.4 miles",
+    distance: "2.4 miles",
   },
   {
+    id: 2,
     img: HamImg,
     imgLogo: ResTwoImg,
     foodName: "The Burger Shack",
     restuarant: "American • Burgers • $",
     time: "20 - 30 min",
-    distanc: "1.1 miles",
+    distance: "1.1 miles",
   },
   {
+    id: 3,
     img: SushiImg,
     imgLogo: ResThreeImg,
     foodName: "Zen Sushi Bar",
     restuarant: "Japanese • Sushi • $$$",
     time: "30 - 45 min",
-    distanc: "3.8 miles",
+    distance: "3.8 miles",
   },
 ];
 

@@ -1,8 +1,10 @@
-import { View, ImageSourcePropType, Image } from "react-native";
+import { View, ImageSourcePropType, Image, Pressable } from "react-native";
 import React from "react";
 import Text from "./Text";
+import { useAppContext } from "@/src/context";
 
 interface CardProps {
+  id: number;
   img: ImageSourcePropType;
   imgLogo: ImageSourcePropType;
   foodName: string;
@@ -12,6 +14,7 @@ interface CardProps {
 }
 
 const Card = ({
+  id,
   img,
   imgLogo,
   foodName,
@@ -19,8 +22,9 @@ const Card = ({
   time,
   distance,
 }: CardProps) => {
+  const {openModal} =useAppContext()
   return (
-    <View className="flex flex-col mb-4">
+    <Pressable onPress={() => openModal(id)} className="flex flex-col mb-4">
       
       <View className="h-50 w-full rounded-xl overflow-hidden">
         <Image
@@ -51,7 +55,7 @@ const Card = ({
         </View>
 
       </View>
-    </View>
+    </Pressable>
   );
 };
 
